@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>俄罗斯方块</title>
+		<style>
+			.game{
+				width: 200px;
+				height: 400px;
+				background: #f2faff;
+				border-left: 1px solid blue;
+				border-right: 1px solid blue;
+				border-bottom: 1px solid blue;
+				position: absolute;
+				top: 10px;
+				left: 10px;
+			}
+			.next{
+				width: 80px;
+				height: 80px;
+				background-color: #f2faff;
+				position: absolute;
+				top: 10px;
+				left: 250px;
+				border: 1px solid blue;
+			}
+			.info{
+				position: absolute;
+				top: 100px;
+				left: 250px;
+			}
+			.none,.current,.done{
+				width: 20px;
+				height: 20px;
+				position: absolute;
+				box-sizing: border-box;
+			}
+			.none{
+				background: #f2faff;
+			}
+			.current{
+				background: pink;
+				border:1px solid red;
+			}
+			.done{
+				background: gray;
+				border:1px solid black;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="game" id="game"></div>
+		<div class="next" id="next"></div>
+		<div class="info">
+			<div>已用时：<span id="time">0</span></div>
+			<div>已得分：<span id="score">0</span></div>
+		</div>
+		<script type="text/javascript">
+			var nextData = [
+				[2,2,0,0],
+				[0,2,2,0],
+				[0,0,0,0],
+				[0,0,0,0]
+			];
+			var gameData = [
+				[0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,1,0,0,0,0],
+				[0,0,0,0,0,0,2,0,0,0],
+				[0,0,0,0,0,0,2,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0],
+				[0,0,0,0,0,0,0,0,0,0],
+				[0,0,1,1,1,1,1,1,0,0]
+			];
+			var nextDivs = [];
+			var gameDivs = [];
+			
+			var initGame = function(){
+				for (var i =0;i<gameData.length;i++) {
+					var gameDiv = [];
+					for (var j =0;j<gameData[0].length;j++) {
+						var newNode = document.createElement("div");
+						newNode.className = "none";
+						newNode.style.top = (i*20)+"px";
+						newNode.style.left = (j*20)+"px";
+						document.getElementById("game").appendChild(newNode);
+						gameDiv.push(newNode);
+					}
+					gameDivs.push(gameDiv);
+				}
+			};
+			
+			var initNext = function(){
+				for (var i =0;i<nextData.length;i++) {
+					var nextDiv = [];
+					for (var j =0;j<nextData[0].length;j++) {
+						var newNode = document.createElement("div");
+						newNode.className = "none";
+						newNode.style.top = (i*20)+"px";
+						newNode.style.left = (j*20)+"px";
+						document.getElementById("next").appendChild(newNode);
+						nextDiv.push(newNode);
+					}
+					nextDivs.push(nextDiv);
+				}
+			};
+			
+			var refreshNext = function(){
+				for (var i =0;i<nextData.length;i++) {
+					for (var j =0;j<nextData[0].length;j++) {
+						if(nextData[i][j] == 0){
+							nextDivs[i][j].className = "none";
+						}else if(nextData[i][j] == 1){
+							nextDivs[i][j].className = "done";
+						}else if(nextData[i][j] == 2){
+							nextDivs[i][j].className = "current";
+						}
+					}
+				}
+			}
+			
+			var refreshGame = function(){
+				for (var i =0;i<gameData.length;i++) {
+					for (var j =0;j<gameData[0].length;j++) {
+						if(gameData[i][j] == 0){
+							gameDivs[i][j].className = "none";
+						}else if(gameData[i][j] == 1){
+							gameDivs[i][j].className = "done";
+						}else if(gameData[i][j] == 2){
+							gameDivs[i][j].className = "current";
+						}
+					}
+				}
+			}
+			
+			initGame();
+			initNext();
+			refreshGame();
+			refreshNext();
+		</script>
+	</body>
+</html>

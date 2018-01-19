@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>图片模糊</title>
+		<meta name="viewport" content="height=device-height,width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+		<style>
+			*{
+				padding: 0;
+				margin: 0;
+			}
+			.content{
+				margin: 0 auto;
+				position: relative;
+				overflow: hidden;
+			}
+			#image{
+				display: block;
+				width: 100%;
+				height: 100%;
+				-webkit-filter: blur(40px); /* Chrome, Safari, Opera */
+    		filter: blur(40px);
+			}
+			.btn{
+				display: block;
+				position: absolute;
+				bottom: 20px;
+				z-index: 200;
+				width: 100px;
+				height: 30px;
+				line-height: 30px;
+				border-radius: 3px;
+				color: #fff;
+				background: #e43932;	
+				text-decoration: none;
+				text-align: center;			
+			}
+			#canvas{
+				display: block;
+				margin: 0 auto;
+				position: absolute;
+				left: 0;
+				top: 0;
+				z-index: 100;
+			}
+			#reset-btn{
+				left: 200px;
+			}
+			#show-btn{
+				left: 50%;
+				margin-left: -50px;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="content">
+			<img id="image" src="1.jpg" />
+			<canvas id="canvas"></canvas>
+			<!--<a id="reset-btn" href="javascript:reset();" class="btn">重置</a>-->
+			<a id="show-btn" href="javascript:show();" class="btn">查看</a>
+		</div>
+		<script type="text/javascript" src="jquery.min.js" ></script>
+		<script>
+			var canvasWidth = window.innerWidth;
+			var canvasHeight = window.innerHeight;
+			var canvas = document.getElementById("canvas");
+			var context = canvas.getContext("2d");
+			canvas.width = canvasWidth;
+			canvas.height = canvasHeight;
+			
+			var image = new Image();
+			var timer = null;
+			var radius = 50;
+			var leftMargin = 0,topMargin=0; 
+			
+			var clippingRegion = {
+				x:-1,
+				y:-1,
+				r:50
+			}
+			image.src = "1.jpg"
+			image.onload = load;
+			image.onresize = load;
+			function load(){
+				$(".content").css("width",canvasWidth+"px").css("height",canvasHeight+"px");
+				$("#image").css("width",image.width+"px").css("height",image.height+"px");
+				
+				leftMargin = (image.width-canvas.width)/2;
+				topMargin = (image.height-canvas.height)/2;
+				
+				$("#image").css("top","-"+topMargin+"px");
+				$("#image").css("left","-"+leftMargin+"px");
+				
+				initCanvas();
+			}
+			
+			function initCanvas(){
+				clippingRegion = {
+					x:Math.random()*(canvas.width-2*radius)+radius,
+					y:Math.random()*(canvas.height-2*radius)+radius,
+					r:radius
+				}
+				draw(image,clippingRegion);
+			}
+			function setClippingRegion(clippingRegion){
+				context.beginPath();
+				context.arc(clippingRegion.x,clippingRegion.y,clippingRegion.r,0,Math.PI*2,false);
+				context.clip();
+			}
+			function draw(image){
+				context.clearRect(0,0,canvas.width,canvas.height);
+				context.save();
+				setClippingRegion(clippingRegion);
+				context.drawImage(image,0,0);
+				context.drawImage(image,leftMargin,topMargin,canvas.width,canvas.height,0,0,canvas.width,canvas.height);
+				context.restore();
+			}
+			
+			function show(){
+				
+				clearInterval(timer);
+				
+				var theAnimation = setInterval(function(){
+					clippingRegion.r += 20
+					if(clippingRegion.r>2*Math.max(canvas.width,canvas.height)){
+						clearInterval(theAnimation);
+					}
+					draw(image,clippingRegion);
+				},30);
+				
+			}
+			function reset(){
+				initCanvas();
+			}
+			timer = setInterval(reset,1000);
+		</script>
+	</body>
+</html>
